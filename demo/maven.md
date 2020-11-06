@@ -1,0 +1,2 @@
+mvn install:install-file "-DgroupId=com.ibm.db2" "-DartifactId=db2jcc" "-Dversion=9.7" "-Dpackaging=jar" "-Dfile=C:\Users\Administrator\Desktop\db2jcc.jar"
+mvn install:install-file "-DgroupId=com.ibm.db2" "-DartifactId=db2jcc4" "-Dversion=9.7" "-Dpackaging=jar" "-Dfile=C:\Users\Administrator\Desktop\db2jcc4.jar"

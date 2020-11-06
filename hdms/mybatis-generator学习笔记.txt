@@ -1,0 +1,78 @@
+使用mybatis-generator反向工程生成代码
+
+(1) 配置generator.xml配置文件
+
+需要注意的一些细节
+
+检查数据库连接信息是否正确【driverClass、connectionURL、userId、password】
+--targetProject属性所指的目录必须存在
+--targetPackage属性配置的包路径会自动创建
+--javaClientGenerator 中type属性XMLMAPPER
+--javaClientGenerator myMapperPackage属性配置自定义Mapper生成包路径
+--配置需要反向生成的表信息  tableName--表名称  domainObjectName--生成的实体类名称（驼峰命名法）
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "file:///D:/gitlab/mybatis-generator-core/src/main/resources/org/mybatis/generator/config/xml/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    
+<!-- 数据库驱动-->
+    <context id="Mysql2Tables" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        <!--数据库链接URL，用户名、密码 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://db:3306/hdms?useUnicode=true&amp;characterEncoding=utf-8&amp;allowMultiQueries=true" userId="root" password="123456">
+        </jdbcConnection>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="com.porshow.model" targetProject="E:\test\java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="false"/>
+        </javaModelGenerator>
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="mybatis.mapper" targetProject="E:\test\resources">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+        <!-- 生成DAO的包名和位置-->
+        <javaClientGenerator myMapperPackage="com.porshow.mapper.MyMapper" type="XMLMAPPER" targetPackage="com.porshow.dao" targetProject="E:\test\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <javaServiceGenerator type="JAVASERVICE" targetPackage="com.porshow.service.test" targetProject="E:\test\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaServiceGenerator>
+
+        <javaControllerGenerator type="JAVASERVICE" targetPackage="com.porshow.controller.test" targetProject="E:\test\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaControllerGenerator>
+        <!-- 要生成哪些表-->       
+        <table   enabledSwagger="true" enabledDateColumn="collectDate"   tableName="test"  domainObjectName="Test" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+
+    </context>
+</generatorConfiguration>
+
+
+（2）通过执行方法加载配置文件进行代码生成
+
+    @Test
+    public void testGeneratorConfigH5Share() throws Exception {
+        List<String> warnings = new ArrayList<String>();
+        ConfigurationParser cp = new ConfigurationParser(warnings);
+        Configuration config = cp.parseConfiguration(this.getClass().getClassLoader().getResourceAsStream("generatorConfig.xml"));
+        DefaultShellCallback shellCallback = new DefaultShellCallback(true);
+        try {
+            MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
+            myBatisGenerator.generate(null);
+        } catch (InvalidConfigurationException e) {
+            assertEquals(2, e.getErrors().size());
+            throw e;
+        }
+    }

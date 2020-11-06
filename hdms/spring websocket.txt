@@ -1,0 +1,71 @@
+spring websocket
+
+（一）建立一个类实现WebSocketConfigurer接口
+
+package com.example.demo.config;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+@Configuration
+@EnableWebMvc
+@EnableWebSocket
+public class SpringWebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
+
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+
+        //springwebsocket 4.1.5版本前默认支持跨域访问，之后的版本默认不支持跨域，需要设置.setAllowedOrigins("*")
+        registry.addHandler(webSocketHandler(),"/websocket/socketServer.do")
+                .addInterceptors(new SpringWebSocketHandlerInterceptor());
+
+        registry.addHandler(webSocketHandler(), "/sockjs/socketServer.do")
+                .addInterceptors(new SpringWebSocketHandlerInterceptor()).withSockJS();
+    }
+
+    @Bean
+    public TextWebSocketHandler webSocketHandler(){
+
+        return new SpringWebSocketHandler();
+    }
+
+}
+
+（二）继承WebSocketHandler对象。该对象提供了客户端连接,关闭,错误,发送等方法,重写这几个方法即可实现自定义业务逻辑
+
+（1）/**
+     * 连接成功时候，会触发页面上onopen方法
+     */
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {}
+
+
+（2）/**
+     * 关闭连接时触发
+     */
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {}
+
+
+（3）/**
+     * js调用websocket.send时候，会调用该方法
+     */
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {}
+
+（4）/**
+     * 出现异常的时候，会调用该方法
+     */
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {}
+
+（5）/**
+     * WebSocketHandler是否处理部分消息
+      */
+    @Override
+    public boolean supportsPartialMessages() {
+        return false;
+    }
+

@@ -1,0 +1,32 @@
+项目业务层目录结构
+
+schedule		只能排班
+dialysis		透析
+dialysisProcess		透析接诊
+patientDialysisMode	医嘱管理
+vascularAccess		诊查处置
+
+device			装置
+
+patient			患者管理
+biology monitor		微生物监测
+
+
+
+```
+/*if(PersonnelTypeEnum.PATIENT.getCode()==type){
+    builder.append(PersonnelTypeEnum.PATIENT.getValue()+name);
+}else if(PersonnelTypeEnum.FAMILIES.getCode()==type){
+    builder.append(name+"的"+PersonnelTypeEnum.FAMILIES.getValue());
+}else if(PersonnelTypeEnum.DOCTOR.getCode()==type){
+    builder.append(PersonnelTypeEnum.DOCTOR.getValue()+name);
+}else if(PersonnelTypeEnum.NURSE.getCode()==type){
+    builder.append(PersonnelTypeEnum.NURSE.getValue()+name);
+}
+//组织发送消息的内容
+Area area = areaDao.selectByPrimaryKey(areaId);
+if(area != null){
+    builder.append("到"+area.getName()+"的第"+bedNumber+"号床位");
+}
+builder.append(content);*/
+```

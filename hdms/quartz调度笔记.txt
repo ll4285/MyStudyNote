@@ -1,0 +1,60 @@
+hdms系统中添加定时调度任务job的学习
+
+一 Quartz 
+
+MyApplicationRunner 类中定义了各个Runner的执行次序
+在里面添加需要执行的Job
+如下代码所示 
+（1）在方法中调用
+public void run(ApplicationArguments var1) throws Exception {
+	test();
+}
+
+（2）具体的test方法 在里面配置调度周期和需要被执行的Job
+    private void test(){
+        try {
+            String identity = "test";
+            JobDetail job = JobBuilder.newJob(TestQuartzJob.class).withIdentity(identity).storeDurably().build();
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(identity)
+                    .withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))//每5秒钟
+                    .build();
+            scheduler.scheduleJob(job, trigger);
+        }catch (ObjectAlreadyExistsException e){
+            logger.info("job重复添加");
+        } catch (SchedulerException e) {
+            logger.info("job添加失败", e);
+        }
+    }
+
+
+(3) Job类的实现
+package com.porshow.quartz;
+
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+/**
+ * Created by lzj on 2020-09-01.
+ */
+@Slf4j
+public class TestQuartzJob implements Job {
+
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        log.info("---------TestQuartzJob的execute方法刚刚执行了--------------");
+    }
+}
+
+
+
+定时调度时间宕机，之后如何处理？
+
+
+
+
+
+
+
